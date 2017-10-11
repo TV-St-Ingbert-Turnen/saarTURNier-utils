@@ -72,4 +72,4 @@ class RefereeFormsGenerator(ExcelGenerator):
 
                 i += 1
 
-
+        self._wb.remove(self._wb["Master"])
