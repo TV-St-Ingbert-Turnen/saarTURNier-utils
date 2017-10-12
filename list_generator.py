@@ -43,7 +43,17 @@ class CsvGenerator(ListGenerator):
         self._participants = []
 
     def generate(self, team_list):
-        pass  # TODO: fill self._data
+
+        for team in team_list:
+            assert isinstance(team, SaarTeam)
+
+            for gymnast in team: # TODO: add iterator functionality ... iterate over gymnasts
+                pass
+
+        # --> participants.csv: "Vorname Name"; "[w|m]"; "tid"
+        # --> teams.csv: "tid";"Name"
+
+        pass  # TODO: fill data
 
     def write(self):
         with open('teams.csv', 'wb') as csvfile:
