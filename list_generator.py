@@ -4,13 +4,26 @@ from openpyxl.worksheet.page import PageMargins
 from openpyxl.worksheet import Worksheet
 from saar_teams import *
 import datetime
+import csv
 
-
-class ExcelGenerator(object):
-
+class ListGenerator(object):
     def __init__(self, file_prefix):
-        self._wb = None
         self._file_prefix = file_prefix
+
+    def generate(self, team_list):
+        raise NotImplementedError()
+
+    def write(self):
+        raise NotImplementedError()
+
+    def close(self):
+        raise NotImplementedError()
+
+
+class ExcelGenerator(ListGenerator):
+    def __init__(self, file_prefix):
+        super().__init__(file_prefix)
+        self._wb = None
 
     def generate(self, team_list):
         raise NotImplementedError()
@@ -23,10 +36,31 @@ class ExcelGenerator(object):
         self._wb.close()
 
 
-class RefereeFormsGenerator(ExcelGenerator):
+class CsvGenerator(ListGenerator):
+    def __init__(self, file_prefix):
+        super().__init__(file_prefix)
+        self._teams = []
+        self._participants = []
 
+    def generate(self, team_list):
+        pass  # TODO: fill self._data
+
+    def write(self):
+        with open('teams.csv', 'wb') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
+            writer.writerows(self._teams)
+
+        with open('participants.csv', 'wb') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
+            writer.writerows(self._participants)
+
+    def close(self):
+        pass
+
+
+class RefereeFormsGenerator(ExcelGenerator):
     def __init__(self):
-        super(RefereeFormsGenerator, self).__init__("Wertungsbogen")
+        super().__init__("Wertungsbogen")
 
     def generate(self, team_list: SaarTeamList):
 
@@ -38,7 +72,8 @@ class RefereeFormsGenerator(ExcelGenerator):
         i = 0
         for team in team_list:
             assert isinstance(team, SaarTeam)
-            for apparatus_f, apparatus_m in [("Boden", "Boden"), ("Sprung", "Sprung"), ("Stufenbarren", "Reck"), ("Balken", "Barren")]:
+            for apparatus_f, apparatus_m in [("Boden", "Boden"), ("Sprung", "Sprung"), ("Stufenbarren", "Reck"),
+                                             ("Balken", "Barren")]:
                 title = "{}_{}_{}".format(team.name[:10], apparatus_f[:2], apparatus_m[:2])
                 print(title)
 
