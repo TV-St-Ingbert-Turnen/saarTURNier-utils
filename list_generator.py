@@ -47,7 +47,11 @@ class CsvGenerator(ListGenerator):
         for team in team_list:
             assert isinstance(team, SaarTeam)
 
-            for gymnast in team: # TODO: add iterator functionality ... iterate over gymnasts
+            for gymnast in team.gymnasts:
+                g_name = "{} {}".format(gymnast.name, gymnast.surname)
+                g_gender = 'm' if gymnast.gender == SaarGymnast.MALE else 'w'
+                self._participants.append([g_name, g_gender]) # TODO: complete
+                # TODO: teams first...
                 pass
 
         # --> participants.csv: "Vorname Name"; "[w|m]"; "tid"
