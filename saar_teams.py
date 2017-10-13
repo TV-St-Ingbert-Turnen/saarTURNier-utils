@@ -126,7 +126,7 @@ class SaarTeam:
 
     @property
     def referees(self):
-        return self.referees
+        return self._referees
 
     @property
     def contact(self):

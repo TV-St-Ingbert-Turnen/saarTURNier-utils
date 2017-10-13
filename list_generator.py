@@ -5,10 +5,15 @@ from openpyxl.worksheet import Worksheet
 from saar_teams import *
 import datetime
 import csv
+import os
+
 
 class ListGenerator(object):
-    def __init__(self):
-        pass
+    def __init__(self, path):
+        self._path = path
+
+    def _get_path(self, filename):
+        return os.path.join(self._path, filename)
 
     def generate(self, team_list):
         raise NotImplementedError()
@@ -21,25 +26,46 @@ class ListGenerator(object):
 
 
 class ExcelGenerator(ListGenerator):
-    def __init__(self, file_prefix):
-        super().__init__(file_prefix)
+    def __init__(self, path, prefix):
+        super().__init__(path)
         self._wb = None
-        self._file_prefix = file_prefix
+        self._prefix = prefix
 
     def generate(self, team_list):
         raise NotImplementedError()
 
     def write(self):
         now = datetime.datetime.now()
-        self._wb.save("{}_{}.xlsx".format(self._file_prefix, now.strftime("%Y-%m-%d")))
+        filename = "{}_{}.xlsx".format(self._prefix, now.strftime("%Y-%m-%d"))
+        self._wb.save(super()._get_path(filename))
 
     def close(self):
         self._wb.close()
 
 
+class RefereeCsvGenerator(ListGenerator):
+    def generate(self, team_list):
+        for tid, team in enumerate(team_list):
+            assert isinstance(team, SaarTeam)
+            for referee in team.referees:
+                self._referees.append([referee, team.name, tid + 1])
+
+    def __init__(self, path):
+        super().__init__(path)
+        self._referees = []
+
+    def write(self):
+        with open(super()._get_path('referees.csv'), 'w', newline='\n', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
+            writer.writerows(self._referees)
+
+    def close(self):
+        pass
+
+
 class ScoreSystemCsvGenerator(ListGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, path):
+        super().__init__(path)
         self._teams = []
         self._participants = []
         # participants.csv: "Vorname Name"; "[w|m]"; "tid"
@@ -48,18 +74,17 @@ class ScoreSystemCsvGenerator(ListGenerator):
     def generate(self, team_list):
         for tid, team in enumerate(team_list):
             assert isinstance(team, SaarTeam)
-            self._teams.append([tid+1, team.name])
+            self._teams.append([tid + 1, team.name])
             for gymnast in team.gymnasts:
                 g_name = "{} {}".format(gymnast.name, gymnast.surname)
                 g_gender = 'm' if gymnast.gender == SaarGymnast.MALE else 'w'
-                self._participants.append([g_name, g_gender, tid+1])
+                self._participants.append([g_name, g_gender, tid + 1])
 
     def write(self):
-        with open('teams.csv', 'w', newline='\n', encoding='utf-8') as csvfile:
+        with open(super()._get_path('teams.csv'), 'w', newline='\n', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
             writer.writerows(self._teams)
-
-        with open('participants.csv', 'w', newline='\n', encoding='utf-8') as csvfile:
+        with open(super()._get_path('participants.csv'), 'w', newline='\n', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
             writer.writerows(self._participants)
 
@@ -68,12 +93,12 @@ class ScoreSystemCsvGenerator(ListGenerator):
 
 
 class RefereeFormsGenerator(ExcelGenerator):
-    def __init__(self):
-        super().__init__("Wertungsbogen")
+    def __init__(self, path):
+        super().__init__(path, "Wertungsbogen")
 
     def generate(self, team_list: SaarTeamList):
 
-        self._wb = load_workbook(filename="./Dokumente/Wertungsbogen_Master.xlsx")
+        self._wb = load_workbook(filename="./templates/Wertungsbogen_Master.xlsx")
         master_ws = self._wb.active
         version_string = master_ws["F2"].value
         check_version(version_string)
