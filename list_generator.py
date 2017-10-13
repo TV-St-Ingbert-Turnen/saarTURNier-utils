@@ -7,8 +7,8 @@ import datetime
 import csv
 
 class ListGenerator(object):
-    def __init__(self, file_prefix):
-        self._file_prefix = file_prefix
+    def __init__(self):
+        pass
 
     def generate(self, team_list):
         raise NotImplementedError()
@@ -24,6 +24,7 @@ class ExcelGenerator(ListGenerator):
     def __init__(self, file_prefix):
         super().__init__(file_prefix)
         self._wb = None
+        self._file_prefix = file_prefix
 
     def generate(self, team_list):
         raise NotImplementedError()
@@ -36,35 +37,29 @@ class ExcelGenerator(ListGenerator):
         self._wb.close()
 
 
-class CsvGenerator(ListGenerator):
-    def __init__(self, file_prefix):
-        super().__init__(file_prefix)
+class ScoreSystemCsvGenerator(ListGenerator):
+    def __init__(self):
+        super().__init__()
         self._teams = []
         self._participants = []
+        # participants.csv: "Vorname Name"; "[w|m]"; "tid"
+        # teams.csv: "tid";"Name"
 
     def generate(self, team_list):
-
-        for team in team_list:
+        for tid, team in enumerate(team_list):
             assert isinstance(team, SaarTeam)
-
+            self._teams.append([tid+1, team.name])
             for gymnast in team.gymnasts:
                 g_name = "{} {}".format(gymnast.name, gymnast.surname)
                 g_gender = 'm' if gymnast.gender == SaarGymnast.MALE else 'w'
-                self._participants.append([g_name, g_gender]) # TODO: complete
-                # TODO: teams first...
-                pass
-
-        # --> participants.csv: "Vorname Name"; "[w|m]"; "tid"
-        # --> teams.csv: "tid";"Name"
-
-        pass  # TODO: fill data
+                self._participants.append([g_name, g_gender, tid+1])
 
     def write(self):
-        with open('teams.csv', 'wb') as csvfile:
+        with open('teams.csv', 'w', newline='\n', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
             writer.writerows(self._teams)
 
-        with open('participants.csv', 'wb') as csvfile:
+        with open('participants.csv', 'w', newline='\n', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
             writer.writerows(self._participants)
 
