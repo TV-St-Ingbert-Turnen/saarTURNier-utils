@@ -3,8 +3,8 @@ from openpyxl import load_workbook
 from openpyxl.worksheet import Worksheet
 from version import check_version
 
-class SaarTeamList:
 
+class SaarTeamList:
     def __init__(self, teams_file: str):
         if not os.path.exists(teams_file):
             raise FileNotFoundError('{} was not found. Please provide the full path.'.format(teams_file))
