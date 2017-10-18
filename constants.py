@@ -1,0 +1,1 @@
+APPARATUS = [("Boden", "Boden"), ("Sprung", "Sprung"), ("Stufenbarren", "Reck"),("Balken", "Barren")]

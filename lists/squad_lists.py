@@ -8,17 +8,37 @@ from constants import APPARATUS
 from .list_generator import ListGenerator, ExcelGenerator
 
 
-class RefereeFormsGenerator(ExcelGenerator):
-    def __init__(self, path):
-        super().__init__(path, "Wertungsbogen")
+class CompetitionPlanGenerator(ExcelGenerator):
+    def __init__(self, path, num_squads):
+        super().__init__(path, "Wettkampfplan")
+        self._num_squads = num_squads
 
     def generate(self, team_list: SaarTeamList):
+        self._wb = Workbook()
 
-        self._wb = load_workbook(filename="../templates/Wertungsbogen_Master.xlsx")
-        assert isinstance(self._wb, Workbook)
-        master_ws = self._wb.active
-        version_string = master_ws["F2"].value
-        check_version(version_string)
+        ws = self._wb.active
+
+        squads = team_list.get_squads(num_squads=self._num_squads)
+
+        # generate simple squad list
+        for sq in squads:
+            # squad id (starting from 1)
+            # squad teams
+            pass
+
+        # generate referee assignment table
+        for i in range(len(squads)):
+            # one referee-set per squad (male/female)
+
+            # apparatus, D and up to 2 E referees for both, male and female (also per squad)
+            pass
+
+        # generate competition plan
+        num_rotations = 4
+        for rotation in range(4):
+            for j, sq in enumerate(squads):
+                apparatus = divmod(rotation + j, num_rotations)[1]
+
 
         i = 0
         for team in team_list:
@@ -58,23 +78,3 @@ class RefereeFormsGenerator(ExcelGenerator):
                 i += 1
 
         self._wb.remove(self._wb["Master"])
-
-
-class RefereeCsvGenerator(ListGenerator):
-    def generate(self, team_list):
-        for tid, team in enumerate(team_list):
-            assert isinstance(team, SaarTeam)
-            for referee in team.referees:
-                self._referees.append([referee, team.name, tid + 1])
-
-    def __init__(self, path):
-        super().__init__(path)
-        self._referees = []
-
-    def write(self):
-        with open(super()._get_path('referees.csv'), 'w', newline='\n', encoding='utf-8') as csvfile:
-            writer = csv.writer(csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
-            writer.writerows(self._referees)
-
-    def close(self):
-        pass

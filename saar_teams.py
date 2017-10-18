@@ -2,7 +2,8 @@ import os
 from openpyxl import load_workbook
 from openpyxl.worksheet import Worksheet
 from version import check_version
-
+from constants import APPARATUS
+import math
 
 class SaarTeamList:
     def __init__(self, teams_file: str):
@@ -79,6 +80,17 @@ class SaarTeamList:
                 saar_teams.remove(t)
 
         return saar_teams
+
+    def get_squads(self, num_squads=2):
+        if num_squads in [2, 4]:
+            raise ValueError("Die Anzahl der Riegen muss 2 oder 4 sein, war aber {}".format(num_squads))
+        num_teams = len(self.teams)
+        teams_per_squad = int(math.floor(float(num_teams)/float(num_squads)))
+        squads = [self.teams[i * teams_per_squad:i * teams_per_squad + teams_per_squad] for i in range(num_squads)]
+        for i in range(num_teams - teams_per_squad * num_squads):
+            squads[i].append(self.teams[teams_per_squad * num_squads + i])
+        return squads
+
 
 
 class SaarTeam:
