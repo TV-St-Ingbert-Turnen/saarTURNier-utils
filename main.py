@@ -1,6 +1,7 @@
 import os
 from lists.referee_lists import RefereeCsvGenerator, RefereeFormsGenerator
 from lists.scoresystem_lists import ScoreSystemCsvGenerator
+from lists.squad_lists import CompetitionPlanGenerator
 from saar_teams import SaarTeamList
 
 if __name__ == '__main__':
@@ -12,6 +13,13 @@ if __name__ == '__main__':
 
     # output test
     default_output_path = "generated_lists"
+
+    gen = CompetitionPlanGenerator(default_output_path, 4)
+    gen.generate(team_list)
+    gen.write()
+    gen.close()
+
+    quit()
 
     gen = RefereeFormsGenerator(default_output_path)
     gen.generate(team_list)

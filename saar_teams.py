@@ -82,7 +82,7 @@ class SaarTeamList:
         return saar_teams
 
     def get_squads(self, num_squads=2):
-        if num_squads in [2, 4]:
+        if num_squads not in [2, 4]:
             raise ValueError("Die Anzahl der Riegen muss 2 oder 4 sein, war aber {}".format(num_squads))
         num_teams = len(self.teams)
         teams_per_squad = int(math.floor(float(num_teams)/float(num_squads)))
