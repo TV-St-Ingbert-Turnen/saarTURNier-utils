@@ -6,7 +6,8 @@ import csv
 from saar_teams import *
 from constants import APPARATUS
 from .list_generator import ListGenerator, ExcelGenerator
-
+import os
+from copy import copy
 
 class CompetitionPlanGenerator(ExcelGenerator):
     def __init__(self, path, num_squads):
@@ -14,7 +15,8 @@ class CompetitionPlanGenerator(ExcelGenerator):
         self._num_squads = num_squads
 
     def generate(self, team_list: SaarTeamList):
-        self._wb = load_workbook(filename="../templates/Wettkampfplan.xlsx")
+
+        self._wb = load_workbook(filename=os.path.join(os.getcwd(), "templates/Wettkampfplan.xlsx"))
 
         ws = self._wb.active
 
@@ -24,13 +26,17 @@ class CompetitionPlanGenerator(ExcelGenerator):
         row_offset = 31
         for sq_id, sq in enumerate(squads):
             for team in sq:
-                ws["A{}".format(row_offset)] = sq_id + 1
-                ws["B{}".format(row_offset)] = team.name
+                ws["A{}".format(row_offset)].value = sq_id + 1
+                ws["B{}".format(row_offset)].value = team.name
                 row_offset += 1
 
         # generate referee assignment table
-        for i in range(len(squads)):
-            # one referee-set per squad (male/female)
+        # one referee-set per squad (male/female); 4 are pre-defined
+        if len(squads) == 2:
+            for row in ws.iter_rows(min_row=19, max_row=25, min_col=4, max_col=5):
+                for cell in row:
+                    cell.value = None
+
 
             # apparatus, D and up to 2 E referees for both, male and female (also per squad)
             pass

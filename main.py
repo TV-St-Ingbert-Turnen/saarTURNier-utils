@@ -14,7 +14,7 @@ if __name__ == '__main__':
     # output test
     default_output_path = "generated_lists"
 
-    gen = CompetitionPlanGenerator(default_output_path, 4)
+    gen = CompetitionPlanGenerator(default_output_path, 2)
     gen.generate(team_list)
     gen.write()
     gen.close()

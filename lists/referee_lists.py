@@ -14,7 +14,7 @@ class RefereeFormsGenerator(ExcelGenerator):
 
     def generate(self, team_list: SaarTeamList):
 
-        self._wb = load_workbook(filename="../templates/Wertungsbogen_Master.xlsx")
+        self._wb = load_workbook(filename="templates/Wertungsbogen_Master.xlsx")
         assert isinstance(self._wb, Workbook)
         master_ws = self._wb.active
         version_string = master_ws["F2"].value
