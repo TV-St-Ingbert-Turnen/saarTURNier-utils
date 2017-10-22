@@ -48,12 +48,10 @@ class SaarTeamList:
             cell = row[0]
             is_str = cell.data_type is 's'
             if is_str and 'Verein #' in cell.value:
-                print(cell.value)
                 team_name = ws['B{}'.format(cell.row)].value
                 team = SaarTeam(team_name)
 
                 for r in range(cell.row + 4, cell.row + 16):
-                    print('gymnasts from {}:{}'.format(r, r))
                     # female gymnasts
                     cells = ws['A{}:C{}'.format(r, r)]
                     team.add_gymnast(self._extract_gymnast(cells, SaarGymnast.FEMALE))
@@ -63,7 +61,6 @@ class SaarTeamList:
                     team.add_gymnast(self._extract_gymnast(cells, SaarGymnast.MALE))
 
                 for r in range(cell.row + 18, cell.row + 21):
-                    print('referees from {}:{}'.format(r, r))
                     # female gymnasts
                     team.add_referee(ws['A{}'.format(r)].value)
 

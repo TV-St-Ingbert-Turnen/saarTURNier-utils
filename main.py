@@ -19,7 +19,6 @@ if __name__ == '__main__':
     gen.write()
     gen.close()
 
-    quit()
 
     gen = RefereeFormsGenerator(default_output_path)
     gen.generate(team_list)
@@ -35,5 +34,3 @@ if __name__ == '__main__':
     gen.generate(team_list)
     gen.write()
     gen.close()
-
-    pass

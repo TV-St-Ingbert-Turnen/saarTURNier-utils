@@ -25,7 +25,6 @@ class RefereeFormsGenerator(ExcelGenerator):
             assert isinstance(team, SaarTeam)
             for apparatus_f, apparatus_m in APPARATUS:
                 title = "{}_{}_{}".format(team.name[:10], apparatus_f[:2], apparatus_m[:2])
-                print(title)
 
                 ws = self._wb.create_sheet(title=title)
                 ws_copy = WorksheetCopy(master_ws, ws)
