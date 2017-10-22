@@ -33,13 +33,19 @@ class CompetitionPlanGenerator(ExcelGenerator):
         # generate referee assignment table
         # one referee-set per squad (male/female); 4 are pre-defined
         if len(squads) == 2:
+            # remove additional cols for referees
             for row in ws.iter_rows(min_row=19, max_row=25, min_col=4, max_col=5):
                 for cell in row:
                     cell.value = None
-
-
-            # apparatus, D and up to 2 E referees for both, male and female (also per squad)
-            pass
+                    cell.border = None
+            # copy referee legend left
+            for row in ws.iter_rows(min_row=20, max_row=25, min_col=6, max_col=6):
+                for cell in row:
+                    n_cell = ws.cell(row=cell.row, column=cell.col_idx-2)
+                    n_cell.value = cell.value
+                    n_cell.font = copy(cell.font)
+                    cell.border = None
+                    cell.value = None
 
         # generate competition plan
         num_rotations = 4
