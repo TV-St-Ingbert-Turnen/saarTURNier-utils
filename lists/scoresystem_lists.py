@@ -1,7 +1,7 @@
 from .list_generator import ListGenerator
 import csv
 from saar_teams import *
-
+from datetime import datetime
 
 class ScoreSystemCsvGenerator(ListGenerator):
     def __init__(self, path):
@@ -9,12 +9,12 @@ class ScoreSystemCsvGenerator(ListGenerator):
         self._teams = []
         self._participants = []
         # participants.csv: "Vorname Name"; "[w|m]"; "tid"
-        # teams.csv: "tid";"Name"
+        # teams.csv: "tid";"name";"year"
 
     def generate(self, team_list):
         for tid, team in enumerate(team_list):
             assert isinstance(team, SaarTeam)
-            self._teams.append([tid + 1, team.name])
+            self._teams.append([tid + 1, team.name, datetime.now().year])
             for gymnast in team.gymnasts:
                 g_name = "{} {}".format(gymnast.name, gymnast.surname)
                 g_gender = 'm' if gymnast.gender == SaarGymnast.MALE else 'w'
