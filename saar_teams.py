@@ -46,7 +46,7 @@ class SaarTeamList:
 
         for row in ws.iter_rows(max_col=1):
             cell = row[0]
-            is_str = cell.data_type is 's'
+            is_str = cell.data_type == 's'
             if is_str and 'Verein #' in cell.value:
                 team_name = ws['B{}'.format(cell.row)].value
                 team = SaarTeam(team_name)
